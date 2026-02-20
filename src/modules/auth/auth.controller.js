@@ -8,8 +8,8 @@ router.post("/signup", async (req, res , next ) => {
     return res.status(200).json({message:"signup successful" , result})
 });
 
-router.post("/login",async (req, res , next ) => {
-    const result = await login(req.body);
+router.post("/login",async (req, res , next ) => {    
+    const result = await login(req.body , `${req.protocol}://${req.host}`);
     return res.status(200).json({message:"login successful" , result})
 });
 

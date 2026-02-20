@@ -1,15 +1,30 @@
-import { JWT_SECRET } from "../../../config/env.services.js";
+import { JWT_SECRET_System , JWT_SECRET_GOOGLE } from "../../../config/env.services.js";
 import { findById, UserModel } from "../../DB/index.js";
 import { throwError } from "../../common/index.js";
 import jwt from "jsonwebtoken";
 export const profile = async (authorization) => {
+  let segneture
+  const decoded = jwt.decode(authorization)  
 
-  const verify = jwt.verify(authorization, JWT_SECRET);
-
-  const user = await findById({ model: UserModel, id: verify.id });
-  if (!user) {
-    throwError("User not found", 404);
+  if(decoded.aud === "System"){
+     segneture = JWT_SECRET_System
+  } else if(decoded.aud === "Google"){
+     segneture = JWT_SECRET_GOOGLE
+  } else {
+    throwError("Invalid token audience", 401);
   }
 
-  return user ;
+  try {
+    const decoded = jwt.verify(authorization, segneture);
+
+    const user = await findById({ model: UserModel, id: decoded.sub });
+    if (!user) {
+      throwError("User not found", 404);
+    }
+
+    return user;
+
+  } catch (err) {
+    throwError("Invalid token", 401);
+  }
 };
