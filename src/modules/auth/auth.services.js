@@ -1,7 +1,7 @@
 import { createOne, findOne, UserModel } from "../../DB/index.js";
 import { throwError } from "../../common/index.js";
 import {encryptData , decryptData, hashing, compare } from "../../common/security/index.js";;
-import { JWT_SECRET_GOOGLE , JWT_SECRET_System } from "../../../config/env.services.js";
+import { JWT_SECRET_GOOGLE , JWT_SECRET_System, Refresh_token_GOOGLE, Refresh_token_System } from "../../../config/env.services.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (input) => {
@@ -75,25 +75,33 @@ export const login = async (input ,issuer) => {
 
   // TOKEN
 
-  let segneture , audience
+  let segneture , audience , refreshSegneture
 
   if(user.provider === 0){
       segneture = JWT_SECRET_System 
+      refreshSegneture = Refresh_token_System
       audience = "System"
   } else if(user.provider === 1){
       segneture = JWT_SECRET_GOOGLE
+      refreshSegneture= Refresh_token_GOOGLE
       audience = "Google"
   }else {
     throwError("Invalid user provider", 400);
   }
 
 
-    const accessToken = jwt.sign({ sub: user._id },segneture,{
-      notBefore: "20s" ,
-      expiresIn: "10m",
-      issuer,
-      audience
-    });
+  const accessToken = jwt.sign({ sub: user._id },segneture,{
+    notBefore: "20s" ,
+    expiresIn: "10m",
+    issuer,
+    audience
+  });
+
+   const refreshToken = jwt.sign({ sub: user._id },refreshSegneture,{
+    expiresIn: "1y",
+    issuer,
+    audience
+  });
   
-    return { user, accessToken };
+    return { accessToken ,refreshToken};
 };

@@ -18,6 +18,9 @@ export const SALT_ROUND = Number(process.env.SALT_ROUND)
 export const SECRET_KEY = process.env.SECRET_KEY
 export const JWT_SECRET_System = process.env.JWT_SECRET_System
 export const JWT_SECRET_GOOGLE = process.env.JWT_SECRET_GOOGLE
+export const Refresh_token_System = process.env.Refresh_token_System
+export const Refresh_token_GOOGLE = process.env.Refresh_token_GOOGLE
+export const JWT_SECRET_RotateToken = process.env.JWT_SECRET_RotateToken
 export const IV_LENGHT = process.env.IV_LENGHT??16
 
 
