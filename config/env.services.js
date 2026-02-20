@@ -17,6 +17,7 @@ export const DB_HOST = process.env.DB_HOST
 export const SALT_ROUND = Number(process.env.SALT_ROUND)
 export const SECRET_KEY = process.env.SECRET_KEY
 export const JWT_SECRET = process.env.JWT_SECRET
+export const IV_LENGHT = process.env.IV_LENGHT??16
 
 
 console.log({NODE_ENV },{ path : env_path[NODE_ENV]} );

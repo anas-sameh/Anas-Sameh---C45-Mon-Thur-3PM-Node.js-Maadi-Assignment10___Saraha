@@ -1,5 +1,5 @@
 import express from "express"
-import { authRouter } from "./modules/index.js"
+import { authRouter,userRouter } from "./modules/index.js"
 import { PORT } from "../config/env.services.js"
 import {connectDB} from "./DB/index.js"
 async function bootstrap() {
@@ -26,7 +26,7 @@ app.get("/" , (req, res, next )=>{
 // auth router 
 app.use("/auth", authRouter);
 
-
+app.use("/user", userRouter);
 
 
 // error handling  

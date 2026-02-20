@@ -24,3 +24,10 @@ export const createMany = async ({
   const dec = await model.insertMany(data, option);
   return dec;
 };
+
+export const findById = async ({
+  model,
+  id = undefined,
+} = {}) => {
+  return await model.findById(id);
+};

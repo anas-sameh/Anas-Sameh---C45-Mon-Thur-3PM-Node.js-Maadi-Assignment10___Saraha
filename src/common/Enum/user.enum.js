@@ -1,11 +1,11 @@
 export const GenderEnum = {
-    1 : "Male",
-    2 : "Female"
+    Male : 0,
+    Female :1
 }
 
 
 export const ProviderEnum = {
-    1 : "System",
-    2 : "Google"
+    System : 0,
+    Google : 1
 
 }

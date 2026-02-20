@@ -1,12 +1,13 @@
-import crypto from "crypto";
-import { SECRET_KEY } from "../../../config/env.services.js";
+import crypto from "node:crypto";
+import { IV_LENGHT, SECRET_KEY } from "../../../config/env.services.js";
 
-const algorithm = "aes-256-cbc";
 
-const key = Buffer.from(SECRET_KEY, "hex");
 
 function encrypt(text) {
-  const iv = crypto.randomBytes(16);
+  const iv = crypto.randomBytes(Number(IV_LENGHT));
+  const algorithm = "aes-256-cbc";
+  const key = Buffer.from(SECRET_KEY, "hex");
+  
 
   const cipher = crypto.createCipheriv(algorithm, key, iv);
 

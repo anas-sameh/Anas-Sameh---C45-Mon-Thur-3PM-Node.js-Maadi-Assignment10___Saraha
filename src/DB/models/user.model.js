@@ -50,9 +50,9 @@ export const UserSchema = new mongoose.Schema({
     // Gender feild
 
     gender : {
-        type : String,
-        required:true,
-        enum :Object.values(GenderEnum) , default: GenderEnum.Male
+        type : Number,
+        enum :Object.values(GenderEnum) ,
+        default: GenderEnum.Male
     },
 
 
@@ -79,7 +79,7 @@ export const UserSchema = new mongoose.Schema({
     // provider feild
 
     provider: {
-        type: String,
+        type: Number,
         enum: Object.values(ProviderEnum),
         default: ProviderEnum.System
     },
