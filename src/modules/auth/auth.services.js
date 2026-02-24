@@ -1,6 +1,6 @@
 import { createOne, findOne, UserModel } from "../../DB/index.js";
 import { throwError } from "../../common/index.js";
-import {encryptData , decryptData, hashing, compare, createToken, getProviderSegneture } from "../../common/security/index.js";;
+import {encryptData , decryptData, hashing, compare, createToken, getProviderSegneture, createLoginCredentials } from "../../common/security/index.js";;
 import { JWT_SECRET_GOOGLE , JWT_SECRET_System, Refresh_token_GOOGLE, Refresh_token_System } from "../../../config/env.services.js";
 
 export const signup = async (input) => {
@@ -84,15 +84,6 @@ const { accessSecret, refreshSecret } = await getProviderSegneture({
   }
 });
 
-
-const accessToken = createToken(
-    { payload: { sub: user._id, provider: user.provider }, secret: accessSecret, options: { expiresIn: "15m" } }
-);
-
-const refreshToken = createToken(
-  { payload: { sub: user._id, provider: user.provider }, secret: refreshSecret, options: { expiresIn: "1y" } }
-);
-
   
-return { accessToken ,refreshToken};
+return await createLoginCredentials(user, accessSecret, refreshSecret);
 };

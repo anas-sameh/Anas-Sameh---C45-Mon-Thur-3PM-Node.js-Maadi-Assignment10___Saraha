@@ -13,9 +13,6 @@ const { accessSecret } = await getProviderSegneture({
   }
 });
 
-console.log(accessSecret); //00e12kjmcvvdpv14a58802deaclkcdnfon46rogjrfojj_system
-
-
   try {
     const verify = verifyToken(authorization, accessSecret);
 
@@ -38,7 +35,7 @@ export const rotate = async (authorization) => {
   try {
     const verify = verifyToken(authorization, refreshSecret);
 
-    const accessToken = createToken({
+    const accessToken = await createToken({
       payload: { sub: verify.sub },
       secret: accessSecret,
       options: {

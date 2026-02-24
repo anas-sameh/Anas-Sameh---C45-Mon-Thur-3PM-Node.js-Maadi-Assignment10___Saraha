@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import throwError from "../utils/throwError.js";
 
-export const createToken = ({payload={}, secret , options ={}}= {}) => {
+export const createToken = async ({payload={}, secret , options ={}}= {}) => {
   return jwt.sign(payload, secret, options);
 };
 
@@ -39,4 +39,17 @@ export async function getProviderSegneture({ user, secrets }) {
   }
 
   throwError("Invalid user provider", 400);
+}
+export async function createLoginCredentials(user , accessSecret, refreshSecret) {
+
+
+const accessToken = await createToken(
+    { payload: { sub: user._id, provider: user.provider }, secret: accessSecret, options: { expiresIn: "15m" } }
+);
+
+const refreshToken = await createToken(
+  { payload: { sub: user._id, provider: user.provider }, secret: refreshSecret, options: { expiresIn: "1y" } }
+);
+
+return { accessToken, refreshToken };
 }
