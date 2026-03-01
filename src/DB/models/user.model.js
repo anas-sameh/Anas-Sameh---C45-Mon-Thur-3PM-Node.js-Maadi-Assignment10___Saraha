@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import {GenderEnum,ProviderEnum} from "../../common/index.js"
+import {GenderEnum,ProviderEnum, RoleEnum} from "../../common/index.js"
 
 export const UserSchema = new mongoose.Schema({
 
@@ -35,7 +35,9 @@ export const UserSchema = new mongoose.Schema({
 
     password : {
         type : String , 
-        required:true,
+        required: function(){
+            return this.provider === ProviderEnum.System
+        },
         minlength :8,
         trim:true
     },
@@ -44,7 +46,6 @@ export const UserSchema = new mongoose.Schema({
     
     phone : {
         type : String  ,
-        required:true
     },
 
     // Gender feild
@@ -60,7 +61,6 @@ export const UserSchema = new mongoose.Schema({
 
     address: {
         type: String,
-        required: true,
         trim: true
     },
 
@@ -82,6 +82,11 @@ export const UserSchema = new mongoose.Schema({
         type: Number,
         enum: Object.values(ProviderEnum),
         default: ProviderEnum.System
+    },
+      Role: {
+        type: Number,
+        enum: Object.values(RoleEnum),
+        default: RoleEnum.User
     },
 
     // change credantials feild

@@ -1,7 +1,8 @@
 import { createOne, findOne, UserModel } from "../../DB/index.js";
-import { throwError } from "../../common/index.js";
-import {encryptData , decryptData, hashing, compare, createToken, getProviderSegneture, createLoginCredentials } from "../../common/security/index.js";;
-import { JWT_SECRET_GOOGLE , JWT_SECRET_System, Refresh_token_GOOGLE, Refresh_token_System } from "../../../config/env.services.js";
+import { ProviderEnum, throwError } from "../../common/index.js";
+import {encryptData , decryptData, hashing, compare, createToken, getProviderSegneture, createLoginCredentials, decodeToken } from "../../common/security/index.js";;
+import { GOOGLE_CLIENT_ID, JWT_SECRET_GOOGLE , JWT_SECRET_System, Refresh_token_GOOGLE, Refresh_token_System } from "../../../config/env.services.js";
+import {OAuth2Client} from 'google-auth-library';
 
 export const signup = async (input) => {
   const { email, password, name, phone, age, address, gender } = input;
@@ -51,8 +52,8 @@ export const login = async (input ,issuer) => {
 
   // validation (Backend validation layer1 befor DB)
 
-  if (!email || !password) {
-    throwError("All fields are required", 400);
+  if (!email || (issuer === ProviderEnum.System && !password)) {
+    throwError("All login fields are required ", 400);
   }
 
   // check email exist
@@ -65,12 +66,15 @@ export const login = async (input ,issuer) => {
   }
 
   // check password
-  const isMatch = await compare(password, user.password);
+  if (issuer === ProviderEnum.System) {
+      const isMatch = await compare(password, user.password);
   if (!isMatch) {
     throwError("Invalid credentials", 401);
   }
-
+  }
+if (user.phone) {
   user.phone = decryptData(JSON.parse(user.phone));
+}
 
   // TOKEN
 
@@ -87,3 +91,44 @@ const { accessSecret, refreshSecret } = await getProviderSegneture({
   
 return await createLoginCredentials(user, accessSecret, refreshSecret);
 };
+
+export const signupWithGoogle = async ({idToken}) => {
+
+const client = new OAuth2Client();
+
+  const ticket = await client.verifyIdToken({
+      idToken,
+      audience: GOOGLE_CLIENT_ID
+  });
+  const payload = ticket.getPayload();
+if (!payload?.email_verified) {
+  throwError("Email is not verified", 400);
+} 
+
+const checkUserExist = await findOne({
+    model: UserModel,
+    filter: { email: payload.email },
+  });
+  
+  if (checkUserExist?.provider === ProviderEnum.System) {
+    throwError("account is already registered with system provider", 409);
+  }else if (checkUserExist?.provider === ProviderEnum.Google) {
+    return await login({ email: payload.email, password: null }, ProviderEnum.Google);
+  }
+
+  if (!checkUserExist) {
+    const user = await createOne({
+      model: UserModel,
+      data: [{
+        email: payload.email,
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        provider: ProviderEnum.Google,
+        profileImage: payload.picture,
+        confirmEmail: new Date(),
+        password: null
+      }]
+    });
+    return await login({ email: user.email, password: null }, ProviderEnum.Google);
+  }
+}

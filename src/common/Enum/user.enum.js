@@ -9,3 +9,9 @@ export const ProviderEnum = {
     Google : 1
 
 }
+
+export const RoleEnum = {
+    User : 0,
+    Admin : 1
+
+}

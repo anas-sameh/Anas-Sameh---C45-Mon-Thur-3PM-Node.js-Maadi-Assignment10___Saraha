@@ -2,6 +2,7 @@ import express from "express"
 import { authRouter,userRouter } from "./modules/index.js"
 import { PORT } from "../config/env.services.js"
 import {connectDB} from "./DB/index.js"
+import cors from "cors"
 async function bootstrap() {
 
 // DB
@@ -15,8 +16,9 @@ const port = PORT
 app.listen(port , ()=>{console.log(`server is running on port --> ${port}`);})
 
 
-// routing 
-app.use(express.json());
+// routing and middlewares
+
+app.use(cors(),express.json());
 
 
 app.get("/" , (req, res, next )=>{
@@ -31,7 +33,7 @@ app.use("/user", userRouter);
 
 // error handling  
 app.use((err, req,res,next)=>{
-    const status = err?.cause?.status || 500;
+    const status = err.statusCode || 500;
     return res.status(status).json({message:err.message} || {message:"Internal server error" ,  stack : err.stack})
 })
 

@@ -1,4 +1,4 @@
-export default function throwError(message, statusCode = 500) {
+export default function throwError(message, statusCode= 500) {
   const error = new Error(message);
   error.statusCode = statusCode;
   throw error;
