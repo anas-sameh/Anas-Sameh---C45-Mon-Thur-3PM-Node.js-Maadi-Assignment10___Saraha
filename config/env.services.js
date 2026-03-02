@@ -23,6 +23,8 @@ export const Refresh_token_GOOGLE = process.env.Refresh_token_GOOGLE
 export const JWT_SECRET_RotateToken = process.env.JWT_SECRET_RotateToken
 export const IV_LENGHT = process.env.IV_LENGHT??16
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
+export const EMAIL_PASS = process.env.EMAIL_PASS
+export const EMAIL_HOST = process.env.EMAIL_HOST
 
 
 console.log({NODE_ENV },{ path : env_path[NODE_ENV]} );

@@ -4,13 +4,10 @@ import {encryptData , decryptData, hashing, compare, createToken, getProviderSeg
 import { GOOGLE_CLIENT_ID, JWT_SECRET_GOOGLE , JWT_SECRET_System, Refresh_token_GOOGLE, Refresh_token_System } from "../../../config/env.services.js";
 import {OAuth2Client} from 'google-auth-library';
 
-export const signup = async (input) => {
-  const { email, password, name, phone, age, address, gender } = input;
 
-  // check if all data are exist (Backend validation layer1 befor DB)
-  if (!email || !password || !name || !phone || !age || !address ) {
-    throwError("All fields are required", 400);
-  }
+
+export const signup = async (input) => {
+  const { email, password, name, phone } = input;
 
   // check user exist
   const getUsers = await findOne({
@@ -50,12 +47,6 @@ export const signup = async (input) => {
 export const login = async (input ,issuer) => {
   const { email, password } = input;
 
-  // validation (Backend validation layer1 befor DB)
-
-  if (!email || (issuer === ProviderEnum.System && !password)) {
-    throwError("All login fields are required ", 400);
-  }
-
   // check email exist
   const user = await findOne({
     model: UserModel,
@@ -66,7 +57,7 @@ export const login = async (input ,issuer) => {
   }
 
   // check password
-  if (issuer === ProviderEnum.System) {
+  if (user.provider === ProviderEnum.System) {
       const isMatch = await compare(password, user.password);
   if (!isMatch) {
     throwError("Invalid credentials", 401);

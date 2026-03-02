@@ -27,8 +27,15 @@ export const UserSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    confirmEmail :{
+    otp:{
+        type : String,
+    },
+    otpExpiration : {
         type : Date,
+    },
+    confirmEmail :{
+        type : Boolean,
+        default:false
     },
 
     // Password feild

@@ -31,3 +31,21 @@ export const findById = async ({
 } = {}) => {
   return await model.findById(id);
 };
+
+export const updateOne = async ({
+  model,
+  filter = {},
+  data = {},
+  option = {},
+} = {}) => {
+  return await model.updateOne(filter, data, option);
+};
+
+export const deleteOne = async ({
+  model,
+  filter = {},
+  data = {},
+  option = {},
+} = {}) => {
+  return await model.deleteOne(filter, data, option);
+};
