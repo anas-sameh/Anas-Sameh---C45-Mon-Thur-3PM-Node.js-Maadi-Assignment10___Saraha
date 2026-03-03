@@ -1,6 +1,8 @@
 import {
+  compare,
   decryptData,
   encryptData,
+  hashing,
   sendToEmail,
   throwError,
 } from "../../common/index.js";
@@ -12,13 +14,13 @@ import crypto from "crypto";
 export const sendOtpToEmail = async (user) => {
  try {
     const otp = crypto.randomInt(100000, 999999).toString();
-    const otpEncrypt = JSON.stringify(encryptData(otp));
     const otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
+    const hashedOtp  = await hashing(otp);
 
     const updatedUser = await updateOne({
       model: UserModel,
       filter: { _id: user._id },
-      data: { otp: otpEncrypt, otpExpiration },
+      data: { otp: hashedOtp, otpExpiration },
     });
 
     if (!updatedUser) {
@@ -60,8 +62,9 @@ if (!userFromDB.otp || !userFromDB.otpExpiration) {
 if (userFromDB.otpExpiration < Date.now()) {
   throwError("OTP expired", 400);
 }
+const checkOtp = await compare(otp, userFromDB.otp);
   
-if (otp !== decryptData(JSON.parse(userFromDB.otp))) {
+if (!checkOtp) {
     throwError("invalid otp", 401);
 }
   // update on DB
