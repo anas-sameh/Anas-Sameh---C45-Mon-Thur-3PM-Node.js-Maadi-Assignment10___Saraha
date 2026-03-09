@@ -3,17 +3,16 @@ export const findOne = async ({
   select = " ",
   option = {},
   filter = {},
-} = {}) => {
-  return await model.findOne(filter, option).select(select)
+} = {}) => {  
+  return await model.findOne(filter, option)
 };
 
 export const createOne = async ({
   model,
-  data = [],
+  data,
   option = {},
 } = {}) => {
-  
-  return  await model.create(data, option);
+  return model.create(data, option);
 };
 
 export const createMany = async ({
@@ -44,8 +43,14 @@ export const updateOne = async ({
 export const deleteOne = async ({
   model,
   filter = {},
-  data = {},
-  option = {},
 } = {}) => {
-  return await model.deleteOne(filter, data, option);
+  return await model.deleteOne(filter)
+};
+
+
+export const deleteMany = async ({
+  model,
+  filter = {},
+} = {}) => {
+  return await model.deleteMany(filter)
 };

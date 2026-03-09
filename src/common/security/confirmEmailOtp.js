@@ -11,8 +11,8 @@ import { UserModel } from "../../DB/index.js";
 import crypto from "crypto"; 
 
 
-export const sendOtpToEmail = async (user) => {
- try {
+export const sendOtpToEmail = async (user) => { 
+  try {  
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
     const hashedOtp  = await hashing(otp);
@@ -41,11 +41,11 @@ export const sendOtpToEmail = async (user) => {
 };
 
 
-export const confirmEmailOtp = async (user, otp) => {
+export const confirmEmailOtp = async (id, otp) => {
 
   const userFromDB = await findOne({
   model: UserModel,
-  filter: { _id: user._id },
+  filter: { _id: id},
 });
 
 if (!userFromDB) {

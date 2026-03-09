@@ -24,5 +24,8 @@ params:joi.object().keys({
 }).required()
 }
 
+export const emailConfirmSchema = {
+  body: joi.object(validationAuthScema.otp(6)).required(),
+};
 
 //   confirmEmail:joi.boolean().default(false).valid(true),

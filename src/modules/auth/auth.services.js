@@ -1,6 +1,6 @@
 import { createOne, findOne, UserModel } from "../../DB/index.js";
 import { ProviderEnum, throwError } from "../../common/index.js";
-import {encryptData , decryptData, hashing, compare, createToken, getProviderSegneture, createLoginCredentials, decodeToken } from "../../common/security/index.js";;
+import {encryptData , decryptData, hashing, compare, createToken, getProviderSegneture, createLoginCredentials, decodeToken, sendOtpToEmail, confirmEmailOtp } from "../../common/security/index.js";;
 import { GOOGLE_CLIENT_ID, JWT_SECRET_GOOGLE , JWT_SECRET_System, Refresh_token_GOOGLE, Refresh_token_System } from "../../../config/env.services.js";
 import {OAuth2Client} from 'google-auth-library';
 
@@ -38,13 +38,12 @@ export const signup = async (input) => {
     data: [input],
   });
 
-  // const result = new UserModel(input);
-  // await result.save()
+
 
   return result;
 };
 
-export const login = async (input ,issuer) => {
+export const login = async (input ) => {
   const { email, password } = input;
 
   // check email exist
@@ -52,6 +51,7 @@ export const login = async (input ,issuer) => {
     model: UserModel,
     filter: { email },
   });
+  
   if (!user) {
     throwError("Invalid credentials", 401);
   }
@@ -62,9 +62,13 @@ export const login = async (input ,issuer) => {
   if (!isMatch) {
     throwError("Invalid credentials", 401);
   }
-  }
+  }  
 if (user.phone) {
   user.phone = decryptData(JSON.parse(user.phone));
+}
+
+if (user.confirmEmail === false) {
+  throwError("Email not verified", 401);
 }
 
   // TOKEN
@@ -79,7 +83,7 @@ const { accessSecret, refreshSecret } = await getProviderSegneture({
   }
 });
 
-  
+
 return await createLoginCredentials(user, accessSecret, refreshSecret);
 };
 
@@ -123,3 +127,15 @@ const checkUserExist = await findOne({
     return await login({ email: user.email, password: null }, ProviderEnum.Google);
   }
 }
+
+export const sendEmailVerify = async (data) => {
+  const user = data[0] 
+  const checkSendOtp = await sendOtpToEmail(user)
+  if (!checkSendOtp) {
+    throwError("faild to send otp " ,400)
+  }
+}
+
+export const emailConfirm = async (user, otp) => {
+ return await confirmEmailOtp(user, otp);
+};

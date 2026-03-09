@@ -25,6 +25,10 @@ export const IV_LENGHT = process.env.IV_LENGHT??16
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 export const EMAIL_PASS = process.env.EMAIL_PASS
 export const EMAIL_HOST = process.env.EMAIL_HOST
+export const DB_REDIS = process.env.DB_REDIS
+export const Refresh_EXPIRE_TIME = Number(process.env.Refresh_EXPIRE_TIME)
+export const JWT_EXPIRE_TIME = Number(process.env.JWT_EXPIRE_TIME
+)
 
 
 console.log({NODE_ENV },{ path : env_path[NODE_ENV]} );

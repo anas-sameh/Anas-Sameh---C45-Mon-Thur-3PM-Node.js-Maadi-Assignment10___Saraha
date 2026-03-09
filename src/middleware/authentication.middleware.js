@@ -1,27 +1,16 @@
-import {segnitureLevel,throwError} from "../common/index.js";
+import {tokenValidation,throwError} from "../common/index.js";
 
-export  function authenticationProfile() {
+export  function authenticationMiddleware(tokenType = "accessToken") {
   return async (req, res, next) => {
     const token = req.headers.authorization;
 
     if (!token) {
       throwError("token header is missing", 401);
     }
-    req.user = await segnitureLevel(token,"accessToken");
-    next();
-  };
-}
-
-export  function authenticationRotate() {
-  return async (req, res, next) => {
-    const token = req.headers.authorization;
-
-    if (!token) {
-      throwError("token header is missing", 401);
-    }
-   const {accessToken, userData} = await segnitureLevel(token ,"refreshToken");
-   req.token = accessToken;
-   req.user = userData;
+    const {userData , verify}= await tokenValidation(token,tokenType);
+    
+    req.user = userData
+    req.token = verify
     next();
   };
 }
@@ -51,7 +40,7 @@ export function secureRotate(roles = []) {
     if (!token) {
       throwError("token header is missing", 401);
     }
-   const {accessToken, userData} = await segnitureLevel(token ,"refreshToken");
+   const {accessToken, userData} = await tokenValidation(token ,"refreshToken");
    req.token = accessToken;
    req.user = userData;
 
